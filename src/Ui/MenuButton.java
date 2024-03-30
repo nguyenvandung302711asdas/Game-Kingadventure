@@ -26,7 +26,7 @@ public class MenuButton {
 	}
 
 	private void initBounds() {
-		bounds = new Rectangle(xPos - xOffsetCenter, yPos, B_WIDTH / 3, B_HEIGHT / 3);
+		bounds = new Rectangle(xPos - xOffsetCenter, yPos, B_WIDTH / 3, B_HEIGHT / 3);	
 
 	}
 

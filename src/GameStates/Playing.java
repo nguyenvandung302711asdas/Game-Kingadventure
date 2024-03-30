@@ -10,56 +10,77 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 import Main.Game;
+import Ui.PauseOverlay;											//PauseMenu
 import Utilz.LoadSave;
+import Ui.PauseOverlay;
+
 
 public class Playing extends State implements StateMethods{
 	
-	BufferedImage[] animations = new BufferedImage[11];
+	private PauseOverlay pauseOverlay;
+	private boolean paused = true;
 	
 	public Playing(Game game) {
 		super(game);
+		pauseOverlay = new PauseOverlay(this);						//PauseMenu
 
 	}
 	
 	@Override
 	public void update() {
+		if(paused)
+			pauseOverlay.update();
+		else ;
 		
 	}
 
 	@Override
 	public void draw(Graphics g) {
-		g.drawImage(animations[1], 1 * 78, 0, 78, 58, null);
-		
+		if(paused)
+			pauseOverlay.draw(g);	
+		else ;
+			
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+//		System.out.println("Clicked");
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
+		if (paused)
+			pauseOverlay.mousePressed(e);
+		else ;
 		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+		if (paused)
+			pauseOverlay.mouseReleased(e);
+		else ;
 		
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
+		if (paused)
+			pauseOverlay.mouseMoved(e);
+		else ;
 		
 	}
 
+	public void unpauseGame() {
+		paused = false;
+	}
+	
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
+		switch(e.getKeyCode()) {
+		case KeyEvent.VK_ESCAPE:
+			GameState.state = GameState.MENU;
+		}
 	}
 
 	@Override

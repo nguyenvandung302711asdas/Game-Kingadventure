@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 
 import Main.Game;
 import Ui.MenuButton;
+import Ui.PauseOverlay;
 import Utilz.LoadSave;
 
 public class Menu extends State implements StateMethods {
@@ -14,11 +15,13 @@ public class Menu extends State implements StateMethods {
 	private MenuButton[] buttons = new MenuButton[4];
 	private BufferedImage backgroundImg;
 	private int menuX, menuY, menuWidth, menuHeight;
+	
 
 	public Menu(Game game) {
 		super(game);
 		loadButtons();
 		loadBackground();
+		
 	}
 
 

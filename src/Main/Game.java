@@ -1,6 +1,9 @@
 package Main;
 
 import java.awt.Graphics;
+
+import javax.swing.JFrame;
+
 import GameStates.GameState;
 import GameStates.Menu;
 import GameStates.Playing;
@@ -58,10 +61,7 @@ public class Game implements Runnable {
 		case OPTIONS:
 			break;
 		case QUIT:
-		default:
 			System.exit(0);
-			break;
-
 		}
 	}
 
