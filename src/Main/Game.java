@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import GameStates.GameState;
 import GameStates.Menu;
 import GameStates.Playing;
+import Level.LevelManager;
 
 public class Game implements Runnable {
 
@@ -18,11 +19,12 @@ public class Game implements Runnable {
 
 	private Playing playing;
 	private Menu menu;
+	private LevelManager level1;
 
 	public final static int TILES_DEFAULT_SIZE = 32;
-	public final static float SCALE = 2;
-	public final static int TILES_IN_WIDTH = 16;
-	public final static int TILES_IN_HEIGHT = 10;
+	public final static float SCALE = 1.5f;
+	public final static int TILES_IN_WIDTH = 26;
+	public final static int TILES_IN_HEIGHT = 14;
 	public final static int TILES_SIZE = (int) (TILES_DEFAULT_SIZE * SCALE);
 	public final static int GAME_WIDTH = TILES_SIZE * TILES_IN_WIDTH;
 	public final static int GAME_HEIGHT = TILES_SIZE * TILES_IN_HEIGHT;
@@ -32,6 +34,7 @@ public class Game implements Runnable {
 
 		gamePanel = new GamePanel(this);
 		gameWindow = new GameWinDow(gamePanel);
+		gamePanel.setFocusable(true);
 		gamePanel.requestFocus();
 
 		startGameLoop();
@@ -41,6 +44,7 @@ public class Game implements Runnable {
 	private void initClasses() {
 		menu = new Menu(this);
 		playing = new Playing(this);
+		level1 = new LevelManager(this);
 	}
 
 	private void startGameLoop() {
@@ -66,6 +70,7 @@ public class Game implements Runnable {
 	}
 
 	public void render(Graphics g) {
+		level1.draw1(g);
 		switch (GameState.state) {
 		case MENU:
 			menu.draw(g);
@@ -114,7 +119,7 @@ public class Game implements Runnable {
 
 			if (System.currentTimeMillis() - lastCheck >= 1000) {
 				lastCheck = System.currentTimeMillis();
-//				System.out.println("FPS: " + frames + " | UPS: " + updates);
+				System.out.println("FPS: " + frames + " | UPS: " + updates);
 				frames = 0;
 				updates = 0;
 
@@ -125,7 +130,7 @@ public class Game implements Runnable {
 
 	public void windowFocusLost() {
 		if (GameState.state == GameState.PLAYING);
-//			playing.getPlayer().resetDirBooleans();
+			playing.getPlayer().resetDirBooleans();
 	}
 
 	public Menu getMenu() {

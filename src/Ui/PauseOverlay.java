@@ -32,19 +32,19 @@ public class PauseOverlay {
 	}
 	
 	private void createUrmButton() {
-		int urmY = (int)(200 * Game.SCALE);
-		int unpauseX = (int)(203 * Game.SCALE);
-		int replayX = (int)(243 * Game.SCALE);
-		int menuX = (int)(282 * Game.SCALE);
+		int urmY = (int)(330 * Game.SCALE);
+		int unpauseX = (int)(348 * Game.SCALE);
+		int replayX = (int)(398 * Game.SCALE);
+		int menuX = (int)(448 * Game.SCALE);
 		unpauseB = new UrmButton(unpauseX, urmY, URM_SIZE_DEFAULT, URM_SIZE_DEFAULT, 0);
 		replayB = new UrmButton(replayX, urmY, URM_SIZE_DEFAULT, URM_SIZE_DEFAULT, 1);
 		menuB = new UrmButton(menuX, urmY, URM_SIZE_DEFAULT, URM_SIZE_DEFAULT, 2);
 	}
 
 	private void createSoundButton() {
-		int soundX = (int)(275 * Game.SCALE);
-		int musicY = (int)(122 * Game.SCALE);
-		int sfxY = (int)(145 * Game.SCALE);
+		int soundX = (int)(440 * Game.SCALE);
+		int musicY = (int)(200 * Game.SCALE);
+		int sfxY = (int)(230 * Game.SCALE);
 		musicButton = new SoundButton(soundX, musicY, SOUND_SIZE_DEFAULT, SOUND_SIZE_DEFAULT);
 		sfxButton = new SoundButton(soundX, sfxY, SOUND_SIZE_DEFAULT, SOUND_SIZE_DEFAULT);
 
@@ -79,7 +79,7 @@ public class PauseOverlay {
 	}
 	
 	public void mouseDragged(MouseEvent e) {
-
+		
 	}
 	
 	public void mousePressed(MouseEvent e) {
@@ -94,6 +94,7 @@ public class PauseOverlay {
 			replayB.setMousePressed(true);
 		else if (isIn(e, unpauseB))
 			unpauseB.setMousePressed(true);
+		
 	}
 
 	public void mouseReleased(MouseEvent e) {

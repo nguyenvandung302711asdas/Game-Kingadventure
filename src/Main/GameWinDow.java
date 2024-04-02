@@ -8,7 +8,7 @@ public class GameWinDow{
 	public GameWinDow(GamePanel gamePanel) {
 		jframe = new JFrame();
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jframe.setLocationRelativeTo(null);
+        jframe.setLocation(200, 100);
         jframe.add(gamePanel);
         jframe.pack();
         jframe.setResizable(false);

@@ -10,7 +10,7 @@ import static Utilz.Constants.UI.Buttons.*;
 
 public class MenuButton {
 	private int xPos, yPos, rowIndex, index;
-	private int xOffsetCenter = B_WIDTH / 6 ;
+	private int xOffsetCenter = B_WIDTH / 4 ;
 	private GameState state;
 	private BufferedImage[] imgs;
 	private boolean mouseOver, mousePressed;
@@ -26,7 +26,7 @@ public class MenuButton {
 	}
 
 	private void initBounds() {
-		bounds = new Rectangle(xPos - xOffsetCenter, yPos, B_WIDTH / 3, B_HEIGHT / 3);	
+		bounds = new Rectangle(xPos - xOffsetCenter, yPos, B_WIDTH / 2, B_HEIGHT / 2);	
 
 	}
 
@@ -38,7 +38,7 @@ public class MenuButton {
 	}
 
 	public void draw(Graphics g) {
-		g.drawImage(imgs[index], xPos - xOffsetCenter, yPos, B_WIDTH /3 , B_HEIGHT / 3, null);
+		g.drawImage(imgs[index], xPos - xOffsetCenter, yPos, B_WIDTH /2 , B_HEIGHT / 2, null);
 	}
 
 	public void update() {
