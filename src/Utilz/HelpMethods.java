@@ -1,56 +1,96 @@
 package Utilz;
 
+import java.awt.geom.Rectangle2D;
+
 import Main.Game;
 
 public class HelpMethods {
 
-	public static boolean CanMoveHere(float x, float y, float width, float height, int level) {
-		if (!IsSolid(x, y, level))
-			if (!IsSolid(x + width, y + height, level))
-				if (!IsSolid(x + width, y, level))
-					if (!IsSolid(x, y + height, level))
+	public static boolean CanMoveHere(float x, float y, float width, float height, int[][] lvlData) {
+		if (!IsSolid(x, y, lvlData))
+			if (!IsSolid(x + width, y + height, lvlData))
+				if (!IsSolid(x + width, y, lvlData))
+					if (!IsSolid(x, y + height, lvlData))
 						return true;
 		return false;
 	}
 
-	private static boolean IsSolid(float x, float y, int level) {
-		if (x < Game.TILES_SIZE || x >= Game.GAME_WIDTH - Game.TILES_SIZE)
+	private static boolean IsSolid(float x, float y, int[][] lvlData) {
+		if (x < 0 || x >= Game.GAME_WIDTH)
 			return true;
-		if (y < Game.TILES_SIZE|| y >= Game.GAME_HEIGHT - Game.TILES_SIZE)
+		if (y < 0 || y >= Game.GAME_HEIGHT)
 			return true;
-	// Map 1
-		if(level == 1) { 
-			if(x > Game.TILES_SIZE && x < Game.TILES_SIZE * 6 - 9)
-				if(y > Game.TILES_SIZE * 10) 
-					return true;
-			if(x > Game.TILES_SIZE * 10 + 10 && x < Game.TILES_SIZE * 18 - 9)
-				if(y > Game.TILES_SIZE * 12) 
-					return true;		
-			//
-			if(x > Game.TILES_SIZE * 7 + 9 && x < Game.TILES_SIZE * 11 - 9)
-				if(y > Game.TILES_SIZE * 7 && y < Game.TILES_SIZE * 8 - 33) 
-					return true;
-			if(x > Game.TILES_SIZE * 15 + 9 && x < Game.TILES_SIZE * 18 - 9)
-				if(y > Game.TILES_SIZE * 9 && y < Game.TILES_SIZE * 9 + 15) 
-					return true;
-			if(x > Game.TILES_SIZE * 18 + 9 && x < Game.TILES_SIZE * 21 - 9)
-				if(y > Game.TILES_SIZE * 5 && y < Game.TILES_SIZE * 5 + 15) 
-					return true;
-			if(x > Game.TILES_SIZE * 12 + 9 && x < Game.TILES_SIZE * 16 - 9)
-				if(y > Game.TILES_SIZE * 4 && y < Game.TILES_SIZE * 4 + 15) 
-					return true;
-			if(x > Game.TILES_SIZE * 21 + 9 && x < Game.TILES_SIZE * 25 - 9)
-				if(y > Game.TILES_SIZE * 8 && y < Game.TILES_SIZE * 8 + 5) 
-					return true;
-			if(x > Game.TILES_SIZE * 24 + 9 && x < Game.TILES_SIZE * 26 - 9)
-				if(y > Game.TILES_SIZE * 7 && y < Game.TILES_SIZE * 8 + 5) 
-					return true;
+		float xIndex = x / Game.TILES_SIZE;
+		float yIndex = y / Game.TILES_SIZE;
+
+		return IsTileSolid((int) xIndex, (int) yIndex, lvlData);
+	}
+
+	public static boolean IsTileSolid(int xTile, int yTile, int[][] lvlData) {
+		int value = lvlData[yTile][xTile];
+
+		if (value >= 102 || value < 0 || value != 22)
+			return true;
+		return false;
+	}
+
+	public static float GetEntityXPosNextToWall(Rectangle2D.Float hitbox, float xSpeed) {
+		int currentTile = (int) (hitbox.x / Game.TILES_SIZE);
+		if (xSpeed > 0) {
+			// Right
+			int tileXPos = currentTile * Game.TILES_SIZE;
+			int xOffset = (int) (Game.TILES_SIZE - hitbox.width);
+			return tileXPos + xOffset - 1;
+		} else
+			// Left
+			return currentTile * Game.TILES_SIZE;
+	}
+
+	public static float GetEntityYPosUnderRoofOrAboveFloor(Rectangle2D.Float hitbox, float airSpeed) {
+		int currentTile = (int) (hitbox.y / Game.TILES_SIZE);
+		if (airSpeed > 0) {
+			// Falling - touching floor
+			int tileYPos = currentTile * Game.TILES_SIZE;
+			int yOffset = (int) (Game.TILES_SIZE - hitbox.height);
+			return tileYPos + yOffset - 1;
+		} else
+			// Jumping
+			return currentTile * Game.TILES_SIZE;
+
+	}
+
+	public static boolean IsEntityOnFloor(Rectangle2D.Float hitbox, int[][] lvlData) {
+		if (!IsSolid(hitbox.x, hitbox.y + hitbox.height + 1, lvlData))
+			if (!IsSolid(hitbox.x + hitbox.width, hitbox.y + hitbox.height + 1, lvlData))
+				return false;
+
+		return true;
+
+	}
+
+	public static boolean IsFloor(Rectangle2D.Float hitbox, float xSpeed, int[][] lvlData) {
+		return IsSolid(hitbox.x + xSpeed, hitbox.y + hitbox.height + 1, lvlData);
+	}
+
+	public static boolean IsAllTilesWalkable(int xStart, int xEnd, int y, int[][] lvlData) {
+		for (int i = 0; i < xEnd - xStart; i++) {
+			if (IsTileSolid(xStart + i, y, lvlData))
+				return false;
+			if (!IsTileSolid(xStart + i, y + 1, lvlData))
+				return false;
 		}
-		
-	// Map 2
-				if(level == 2) { 
-					///continue
-				}
-	return false;	
-	}		
+
+		return true;
+	}
+
+	public static boolean IsSightClear(int[][] lvlData, Rectangle2D.Float firstHitbox, Rectangle2D.Float secondHitbox, int yTile) {
+		int firstXTile = (int) (firstHitbox.x / Game.TILES_SIZE);
+		int secondXTile = (int) (secondHitbox.x / Game.TILES_SIZE);
+
+		if (firstXTile > secondXTile)
+			return IsAllTilesWalkable(secondXTile, firstXTile, yTile, lvlData);
+		else
+			return IsAllTilesWalkable(firstXTile, secondXTile, yTile, lvlData);
+
+	}
 }

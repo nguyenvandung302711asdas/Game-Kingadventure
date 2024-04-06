@@ -10,32 +10,17 @@ import javax.imageio.ImageIO;
 import Main.Game;
 
 public class LoadSave {
-
+	
+	public static final String PIG = "Pig.png";
 	public static final String Player = "king.png";	
-	
-	public static final String Menu_Button = "button_atlas.png";	
-
+	public static final String Menu_Button = "button_atlas.png";
 	public static final String Menu_Background = "menu_background.png";
-	
 	public static final String Pause_Background = "pause_menu.png";
-	
 	public static final String Sound_Button = "sound_button.png";
-	
 	public static final String URM_Button = "urm_buttons.png";
-
-	public static final String LEVEL_ATLAS = "14-TileSets/Terrain (32x32).png";
-	public static final String LEVEL_DECOR = "14-TileSets/Decorations (32x32).png";
-//	public static final String CLOSE = "13-Dialogue Boxes/Closiong(46x56).png";
-	public static final String THUNG = "08-Box/Idle.png";
-	public static final String MONSTER_THUNG = "04-Pig Throwing a Box/Idle (26x30).png";
-	public static final String BOON_OFF = "09-Bomb/Bomb Off.png";
-	public static final String IDLE_CANNON = "10-Cannon/Idle.png";
-	public static final String KING_PING = "02-King Pig/Ground (38x28).png";
-	public static final String PING_CANNON = "07-Pig With a Match/Match On (26x18).png";
-	public static final String THUNG_PING = "03-Pig/Idle (34x28).png";
-	public static final String PING_Static = "03-Pig/Idle (34x28).png";
-	public static final String PING_BOOM = "05-Pig Thowing a Bomb/Idle (26x26).png";
-	public static final String LIVE_BAR = "12-Live and Coins/Live Bar.png";
+	public static final String Menu_Background_img = "background_menu.png";
+	public static final String LEVEL_ONE_DATA = "Level_1.png";
+	public static final String LEVEL_ATLAS = "Sprite.png";
 	
 	public static BufferedImage GetSpriteAtlas(String fileName) {
 		BufferedImage img = null;
@@ -56,20 +41,19 @@ public class LoadSave {
 		}
 		return img;
 	} 
+	
+	public static int[][] GetLevelData() {
+		int[][] lvlData = new int[Game.TILES_IN_HEIGHT][Game.TILES_IN_WIDTH];
+		BufferedImage img = GetSpriteAtlas(LEVEL_ONE_DATA);
+		for (int j = 0; j < img.getHeight(); j++)
+			for (int i = 0; i < img.getWidth(); i++) {
+				Color color = new Color(img.getRGB(i, j));
+				int value = color.getRed();
+				if (value >= 102)
+					value = 0;
+				lvlData[j][i] = value;
+			}
+		return lvlData;
 
-//	public static int[][] GetLevelData() {
-//		int[][] lvlData = new int[Game.TILES_IN_HEIGHT][Game.TILES_IN_WIDTH];
-//		BufferedImage img = GetSpriteAtlas(LEVEL_ONE_DATA);
-//
-//		for (int j = 0; j < img.getHeight(); j++)
-//			for (int i = 0; i < img.getWidth(); i++) {
-//				Color color = new Color(img.getRGB(i, j));
-//				int value = color.getRed();
-//				if (value >= 48)
-//					value = 0;
-//				lvlData[j][i] = value;
-//			}
-//		return lvlData;
-//
-//	}
+	}
 }

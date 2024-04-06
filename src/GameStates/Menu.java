@@ -13,7 +13,7 @@ import Utilz.LoadSave;
 public class Menu extends State implements StateMethods {
 
 	private MenuButton[] buttons = new MenuButton[4];
-	private BufferedImage backgroundImg;
+	private BufferedImage backgroundImg,backgroundImgPink;
 	private int menuX, menuY, menuWidth, menuHeight;
 	
 
@@ -21,6 +21,7 @@ public class Menu extends State implements StateMethods {
 		super(game);
 		loadButtons();
 		loadBackground();
+		backgroundImgPink = LoadSave.GetSpriteAtlas(LoadSave.Menu_Background_img);
 	}
 
 	private void loadButtons() {
@@ -47,6 +48,8 @@ public class Menu extends State implements StateMethods {
 
 	@Override
 	public void draw(Graphics g) {
+		
+		g.drawImage(backgroundImgPink, 0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT, null);  
 
 		g.drawImage(backgroundImg, menuX, menuY, menuWidth, menuHeight, null);
 		for (MenuButton mb : buttons)

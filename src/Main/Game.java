@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import GameStates.GameState;
 import GameStates.Menu;
 import GameStates.Playing;
-import Level.LevelManager;
+import Levels.LevelManager;
 
 public class Game implements Runnable {
 
@@ -22,9 +22,9 @@ public class Game implements Runnable {
 	private LevelManager level1;
 
 	public final static int TILES_DEFAULT_SIZE = 32;
-	public final static float SCALE = 1.5f;
-	public final static int TILES_IN_WIDTH = 26;
-	public final static int TILES_IN_HEIGHT = 14;
+	public final static float SCALE = 1.2f;
+	public final static int TILES_IN_WIDTH = 30;
+	public final static int TILES_IN_HEIGHT = 18;
 	public final static int TILES_SIZE = (int) (TILES_DEFAULT_SIZE * SCALE);
 	public final static int GAME_WIDTH = TILES_SIZE * TILES_IN_WIDTH;
 	public final static int GAME_HEIGHT = TILES_SIZE * TILES_IN_HEIGHT;
@@ -70,7 +70,7 @@ public class Game implements Runnable {
 	}
 
 	public void render(Graphics g) {
-		level1.draw1(g);
+		level1.draw(g);
 		switch (GameState.state) {
 		case MENU:
 			menu.draw(g);

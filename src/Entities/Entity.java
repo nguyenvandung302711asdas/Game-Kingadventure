@@ -17,25 +17,17 @@ public abstract class Entity {
 		this.y = y;
 		this.width = width;
 		this.height = height;
-
 	}
 
 	protected void drawHitbox(Graphics g) {
 
 		g.setColor(Color.PINK);
 		g.drawRect((int) hitbox.x, (int) hitbox.y, (int) hitbox.width, (int) hitbox.height);
-//		g.drawRect((int) Game.TILES_SIZE * 7 + 9, (int) Game.TILES_SIZE * 7, (int) 172, (int) 15);
-
 	}
 
 	protected void initHitbox(float x, float y, float f, float g) {
 		hitbox = new Rectangle2D.Float(x, y, f, g);
 	}
-
-//	protected void updateHitbox() {
-//		hitbox.x = (int) x;
-//		hitbox.y = (int) y;
-//	}
 
 	public Rectangle2D.Float getHitbox() {
 		return hitbox;
