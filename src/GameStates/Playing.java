@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +12,7 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 import Main.Game;
+import Ui.GameOverOverlay;
 import Ui.PauseOverlay;											//PauseMenu
 import Utilz.LoadSave;
 import Ui.PauseOverlay;
@@ -26,7 +28,10 @@ public class Playing extends State implements StateMethods{
 	private EnemyManager enemyManager;
 	private LevelManager levelManager;
 	private PauseOverlay pauseOverlay;
+	private GameOverOverlay gameOverOverlay;
+	
 	private boolean paused = false;
+	private boolean gameOver = false;
 	
 	public Playing(Game game) {
 		super(game);
@@ -36,10 +41,11 @@ public class Playing extends State implements StateMethods{
 	
 	public void initClasses() {
 		levelManager = new LevelManager(game);
-		player = new Player(150, 270, 78, 57);
+		player = new Player(50, 270, 78, 57, this);
 		player.loadLvlData(levelManager.getCurrentLevel().getLevelData());
 		enemyManager = new EnemyManager(this);
 		pauseOverlay = new PauseOverlay(this);						//PauseMenu
+		gameOverOverlay = new GameOverOverlay(this);
 	}
 	
 	@Override
@@ -50,24 +56,26 @@ public class Playing extends State implements StateMethods{
 		}
 		else 
 			pauseOverlay.update();
-		
-		
 	}
 
 	@Override
 	public void draw(Graphics g) {
-	
-			enemyManager.draw(g);
-			player.render(g);
-			if(paused) {
-				g.setColor(new Color(0,0,0,100));
-			    g.fillRect(0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT);
-				pauseOverlay.draw(g);	
+		player.render(g);
+		enemyManager.draw(g);
 			
-			}
-			
+		if(paused) {
+			g.setColor(new Color(0,0,0,100));
+			g.fillRect(0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT);
+			pauseOverlay.draw(g);
+		}
+		else if(gameOver) {
+			gameOverOverlay.draw(g);
+		}
 		
-			
+	}
+	
+	public void setGameOver(boolean gameOver) {
+		this.gameOver = gameOver;
 	}
 
 	@Override
@@ -77,26 +85,23 @@ public class Playing extends State implements StateMethods{
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (paused)
-			pauseOverlay.mousePressed(e);
-		else ;
-		
+		if (!gameOver)
+			if (paused)
+				pauseOverlay.mousePressed(e);;
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (paused)
-			pauseOverlay.mouseReleased(e);
-		else ;
-		
+		if (!gameOver)
+			if (paused)
+				pauseOverlay.mouseReleased(e);
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		if (paused)
-			pauseOverlay.mouseMoved(e);
-		else ;
-		
+		if (!gameOver)
+			if (paused)
+				pauseOverlay.mouseMoved(e);
 	}
 
 	public void unpauseGame() {
@@ -105,6 +110,9 @@ public class Playing extends State implements StateMethods{
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
+		if (gameOver)
+			gameOverOverlay.keyPressed(e);
+		else
 		switch(e.getKeyCode()) {
 		case KeyEvent.VK_ESCAPE:
 			paused = !paused;
@@ -126,14 +134,13 @@ public class Playing extends State implements StateMethods{
 			break;
 		case KeyEvent.VK_SPACE:
 			player.setJump(true);
-
 			break;
-
 		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		if (!gameOver)
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_A:
 			player.setLeft(false);
@@ -152,7 +159,6 @@ public class Playing extends State implements StateMethods{
 //			break;
 		case KeyEvent.VK_SPACE:
 			player.setJump(false);
-
 			break;
 		}
 		
@@ -161,5 +167,15 @@ public class Playing extends State implements StateMethods{
 	public Player getPlayer() {
 		return player;
 	}
+
+	public void resetAll() {
+		gameOver = false;
+		paused = false;
+		player.resetAll();
+		enemyManager.resetAllEnemies();
+	}
 	
+	public void checkEnemyHit(Rectangle2D.Float attackBox) {
+		enemyManager.checkEnemyHit(attackBox);
+	}
 }

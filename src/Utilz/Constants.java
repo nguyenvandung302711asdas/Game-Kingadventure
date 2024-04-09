@@ -60,7 +60,7 @@ public class Constants {
 	}
 	
 	public static class EnemyConstants {
-		public static final int PIG = 0;
+		public static final int PIGGY = 0;
 		
 		public static final int IDLE = 5;
 		public static final int RUNNING = 7;
@@ -68,15 +68,18 @@ public class Constants {
 		public static final int HIT = 4;
 		public static final int DEAD = 1;
 
-		public static final int PIG_WIDTH_DEFAULT = 32;
-		public static final int PIG_HEIGHT_DEFAULT = 32;
+		public static final int PIGGY_WIDTH_DEFAULT = 34;
+		public static final int PIGGY_HEIGHT_DEFAULT = 28;
 
-		public static final int PIG_WIDTH = (int) (PIG_WIDTH_DEFAULT * Game.SCALE);
-		public static final int PIG_HEIGHT = (int) (PIG_HEIGHT_DEFAULT * Game.SCALE);
+		public static final int PIGGY_WIDTH = (int) (PIGGY_WIDTH_DEFAULT * Game.SCALE * Game.SCALE);
+		public static final int PIGGY_HEIGHT = (int) (PIGGY_HEIGHT_DEFAULT * Game.SCALE * Game.SCALE);
+		
+		public static final int PIGGY_DRAWOFFSET_X = (int) (10 * Game.SCALE);
+		public static final int PIGGY_DRAWOFFSET_Y = (int) (12 * Game.SCALE);
 
 		public static int GetSpriteAmount(int enemy_type, int enemy_state) {
 			switch(enemy_type) {
-			case PIG: 
+			case PIGGY: 
 				switch (enemy_state) {
 				case IDLE:
 					return 11;
@@ -92,6 +95,25 @@ public class Constants {
 				return 0;
 			}
 			return 0;
+		}
+		
+		public static int GetMaxHealth(int enemy_type) {
+			switch(enemy_type) {
+			case PIGGY:
+				return 15;
+			default:
+				return 1;
+			}
+		}
+		
+		public static int GetEnemyDmg(int enemy_type) {
+			switch (enemy_type) {
+			case PIGGY:
+				return 10;
+			default:
+				return 0;
+			}
+
 		}
 
 	}

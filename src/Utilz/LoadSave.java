@@ -21,6 +21,7 @@ public class LoadSave {
 	public static final String Menu_Background_img = "background_menu.png";
 	public static final String LEVEL_ONE_DATA = "Level_1.png";
 	public static final String LEVEL_ATLAS = "Sprite.png";
+	public static final String STATUS_BAR = "health_power_bar.png";
 	
 	public static BufferedImage GetSpriteAtlas(String fileName) {
 		BufferedImage img = null;

@@ -19,19 +19,19 @@ public abstract class Enemy extends Entity {
 	protected float walkSpeed = 0.35f * Game.SCALE;
 	protected int walkDir = LEFT;
 	protected int tileY;
-	protected float attackDistance = Game.TILES_SIZE / Game.SCALE;
+	protected float attackDistance = Game.TILES_SIZE * Game.SCALE - 5;
 	protected int maxHealth;
 	protected int currentHealth;
 	protected boolean active = true;
 	protected boolean attackChecked;
+	
 
 	public Enemy(float x, float y, int width, int height, int enemyType) {
 		super(x, y, width, height);
-		this.enemyType = enemyType;
 		initHitbox(x, y, width, height);
-//		maxHealth = GetMaxHealth(enemyType);
+		this.enemyType = enemyType;
+		maxHealth = GetMaxHealth(enemyType);
 		currentHealth = maxHealth;
-
 	}
 
 	protected void firstUpdateCheck(int[][] lvlData) {
@@ -47,24 +47,22 @@ public abstract class Enemy extends Entity {
 		} else {
 			inAir = false;
 			hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, fallSpeed);
-			tileY = (int) (hitbox.y / Game.TILES_SIZE);
+			tileY = (int) ((hitbox.y + hitbox.height)/ Game.TILES_SIZE);
 		}
 	}
 
 	protected void move(int[][] lvlData) {
 		float xSpeed = 0;
 
-		if (walkDir == LEFT)
+		if (walkDir == LEFT) 
 			xSpeed = -walkSpeed;
-		else
+		else 
 			xSpeed = walkSpeed;
-
 		if (CanMoveHere(hitbox.x + xSpeed, hitbox.y, hitbox.width, hitbox.height, lvlData))
 			if (IsFloor(hitbox, xSpeed, lvlData)) {
 				hitbox.x += xSpeed;
 				return;
 			}
-
 		changeWalkDir();
 	}
 
@@ -76,13 +74,14 @@ public abstract class Enemy extends Entity {
 	}
 
 	protected boolean canSeePlayer(int[][] lvlData, Player player) {
-		int playerTileY = (int) (player.getHitbox().y / Game.TILES_SIZE);
-		if (playerTileY - tileY <= 0)
+		int playerTileY = (int) ((player.getHitbox().y + player.getHitbox().height) / Game.TILES_SIZE);
+		if (playerTileY == tileY)
 			if (isPlayerInRange(player)) {
-				if (IsSightClear(lvlData, hitbox, player.hitbox, tileY))
+				if (IsSightClear2(lvlData, hitbox, player.hitbox, tileY))
+					return true;
+				if (IsSightClear2(lvlData, hitbox, player.hitbox, tileY))
 					return true;
 			}
-
 		return false;
 	}
 
@@ -110,12 +109,10 @@ public abstract class Enemy extends Entity {
 			newState(HIT);
 	}
 
-	// Changed the name from "checkEnemyHit" to checkPlayerHit
 	protected void checkPlayerHit(Rectangle2D.Float attackBox, Player player) {
 		if (attackBox.intersects(player.hitbox))
-//			player.changeHealth(-GetEnemyDmg(enemyType));
+			player.changeHealth(-GetEnemyDmg(enemyType));
 		attackChecked = true;
-
 	}
 
 	protected void updateAnimationTick() {
