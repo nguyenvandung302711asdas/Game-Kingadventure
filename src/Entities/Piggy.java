@@ -24,15 +24,6 @@ public class Piggy extends Enemy{
 	private void initAttackBox() {
 		attackBox = new Rectangle2D.Float(x, y, (int) (12 * Game.SCALE), (int) (28 * Game.SCALE));
 	}
-
-	public static ArrayList<Piggy> GetPigs(){
-		ArrayList<Piggy> list = new ArrayList<>();
-		list.add(new Piggy(24 * Game.TILES_SIZE, 4* Game.TILES_SIZE));
-		list.add(new Piggy(9 * Game.TILES_SIZE, 5* Game.TILES_SIZE));
-		list.add(new Piggy(7 * Game.TILES_SIZE, 12* Game.TILES_SIZE));
-
-		return list;
-	}
 	
 	public void update(int[][] level, Player player) {
 		updateMove(level, player);

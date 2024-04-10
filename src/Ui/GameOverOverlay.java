@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 
 import GameStates.GameState;
 import GameStates.Playing;
+import Levels.LevelManager;
 import Main.Game;
 
 public class GameOverOverlay {

@@ -1,8 +1,14 @@
 package Utilz;
 
+import java.awt.Color;
+import java.awt.Point;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
+import Entities.Piggy;
 import Main.Game;
+import static Utilz.Constants.EnemyConstants.PIGGY;
 
 public class HelpMethods {
 
@@ -105,4 +111,49 @@ public class HelpMethods {
 		else
 			return IsAllTilesWalkable(firstXTile, secondXTile, yTile, lvlData);
 	}
+	
+	public static int[][] GetLevelData(BufferedImage img) {
+		int[][] lvlData = new int[img.getHeight()][img.getWidth()];
+		for (int j = 0; j < img.getHeight(); j++)
+			for (int i = 0; i < img.getWidth(); i++) {
+				Color color = new Color(img.getRGB(i, j));
+				int value = color.getRed();
+				if (value >= 102)
+					value = 0;
+				lvlData[j][i] = value;
+			}
+	return lvlData;
+	}
+	
+	public static ArrayList<Piggy> GetPigs(int lvlIndex) {
+		ArrayList<Piggy> list = new ArrayList<>();
+		switch(lvlIndex) {
+		case 0:
+			System.out.println(lvlIndex);
+//			list.add(new Piggy(24 * Game.TILES_SIZE, 4* Game.TILES_SIZE));
+//			list.add(new Piggy(9 * Game.TILES_SIZE, 5* Game.TILES_SIZE));
+			list.add(new Piggy(7 * Game.TILES_SIZE, 12* Game.TILES_SIZE));
+			break;
+		case 1:
+			System.out.println(lvlIndex);
+			list.add(new Piggy(2 * Game.TILES_SIZE, 4 * Game.TILES_SIZE));
+			list.add(new Piggy(3 * Game.TILES_SIZE, 5 * Game.TILES_SIZE));
+			list.add(new Piggy(22 * Game.TILES_SIZE, 12 * Game.TILES_SIZE));
+			break;
+		
+		}
+		return list;
+	}
+	
+	public static Point GetPlayerSpawn(int lvlIndex) {
+		switch(lvlIndex) {	
+		case 0:
+			return new Point(2 * Game.TILES_SIZE, 4 * Game.TILES_SIZE);
+		case 1:
+			return new Point(22 * Game.TILES_SIZE, 12 * Game.TILES_SIZE);
+		
+		}
+		return new Point(1 * Game.TILES_SIZE, 1 * Game.TILES_SIZE);
+	}
+
 }

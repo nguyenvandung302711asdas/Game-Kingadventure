@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import GameStates.Playing;
+import Levels.Level;
 import Main.Game;
 import Utilz.LoadSave;
 
@@ -22,17 +23,21 @@ public class EnemyManager {
 	public EnemyManager(Playing playing) {
 		this.playing = playing;
 		loadEnemyImgs();
-		addEnemies();
 	}
 	
-	private void addEnemies() {
-		pigs = Piggy.GetPigs();
+	public void loadEnemies(Level level) {
+		pigs = level.getPigs();
 	}
 
 	public void update(int[][] level, Player player) {
-		for(Piggy p : pigs) {
-			p.update(level, player);
-		}
+		boolean isAnyActive = false;
+		for(Piggy p : pigs) 
+			if (p.isActive()) {
+				p.update(level, player);
+				isAnyActive = true;
+			}
+		if(!isAnyActive)
+			playing.setLevelCompleted(true);
 	}
 	
 	public void draw(Graphics g) {
@@ -61,7 +66,7 @@ public class EnemyManager {
 		for (Piggy c : pigs)
 			if (c.isActive())
 				if (attackBox.intersects(c.getHitbox())) {
-					c.hurt(1);
+					c.hurt(10);
 					return;
 				}
 	}
