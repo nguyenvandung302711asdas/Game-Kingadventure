@@ -14,6 +14,13 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>Res/icon (1).png</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/icon%20(1).png</locationURI>
+		</link>
+	</linkedResources>
 	<filteredResources>
 		<filter>
 			<id>1711340359079</id>

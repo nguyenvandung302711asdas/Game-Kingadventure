@@ -2,8 +2,6 @@ package Ui;
 
 import java.awt.Rectangle;
 
-import GameStates.GameState;
-
 public class PauseButton {
 
 	protected int x, y, Width, Height;

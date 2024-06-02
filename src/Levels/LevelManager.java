@@ -31,8 +31,8 @@ public class LevelManager {
 
 	private void importOutsideSprites() {
 		BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.LEVEL_ATLAS);
-		levelSprite = new BufferedImage[102];
-		for (int j = 0; j < 6; j++)
+		levelSprite = new BufferedImage[136];
+		for (int j = 0; j < 8; j++)
 			for (int i = 0; i < 17; i++) {
 				int index = j * 17 + i;
 				levelSprite[index] = img.getSubimage(i * 32, j * 32, 32, 32);
@@ -50,7 +50,9 @@ public class LevelManager {
 	public void update() {
 		
 	}	
-
+	public int getLevelIndex() {
+		return lvlIndex;
+	}
 	public Level getCurrentLevel() {
 		return levels.get(lvlIndex);
 	}
@@ -63,13 +65,34 @@ public class LevelManager {
 		lvlIndex++;
 		if(lvlIndex >= levels.size()) {
 			lvlIndex = 0;
-			System.out.println("Win cmnr");
 			GameState.state = GameState.MENU;
 		}
 		Level newLevel = levels.get(lvlIndex);
 		newLevel.createEnemies(lvlIndex);
 		newLevel.calcPlayerSpawn(lvlIndex);
+		newLevel.createContainers(lvlIndex);
+		newLevel.createDiamonds(lvlIndex);
+		newLevel.createCannons(lvlIndex);
+		newLevel.createSpikes(lvlIndex);
+
 		game.getPlaying().getEnemyManager().loadEnemies(newLevel);
 		game.getPlaying().getPlayer().loadLvlData(newLevel.getLevelData());
+		game.getPlaying().getObjectManager().loadObjects(newLevel);
 	}
+	public void loadPreviousLevel() {
+		lvlIndex--;
+		
+		Level newLevel = levels.get(lvlIndex);
+		newLevel.createEnemies(lvlIndex);
+		newLevel.calcPlayerSpawn(lvlIndex);
+		newLevel.createContainers(lvlIndex);
+		newLevel.createDiamonds(lvlIndex);
+		newLevel.createCannons(lvlIndex);
+		newLevel.createSpikes(lvlIndex);
+
+		game.getPlaying().getEnemyManager().loadEnemies(newLevel);
+		game.getPlaying().getPlayer().loadLvlData(newLevel.getLevelData());
+		game.getPlaying().getObjectManager().loadObjects(newLevel);
+	}
+	
 }

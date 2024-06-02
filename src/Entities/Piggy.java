@@ -6,7 +6,6 @@ import static Utilz.Constants.Directions.*;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 
 import Main.Game;
 

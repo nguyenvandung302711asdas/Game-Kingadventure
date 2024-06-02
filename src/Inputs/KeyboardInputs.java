@@ -5,7 +5,6 @@ import java.awt.event.KeyListener;
 
 import GameStates.GameState;
 import Main.GamePanel;
-import static Utilz.Constants.Directions.*;
 
 
 public class KeyboardInputs implements KeyListener {
@@ -30,6 +29,15 @@ public class KeyboardInputs implements KeyListener {
 		case PLAYING:
 			gamePanel.getGame().getPlaying().keyReleased(e);
 			break;
+		case LEVEL:
+			gamePanel.getGame().getLevelGame().keyReleased(e);
+			break;
+		case HIGHSCORE:
+			gamePanel.getGame().getHighScores().keyReleased(e);
+			break;
+		case INSTRUCTION:
+			gamePanel.getGame().getHighScores().keyReleased(e);
+			break;
 		default:
 			break;
 
@@ -40,11 +48,19 @@ public class KeyboardInputs implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		switch (GameState.state) {
 		case MENU:
-			gamePanel.getGame().getMenu().keyPressed(e);
-		
+			gamePanel.getGame().getMenu().keyPressed(e);		
 			break;
 		case PLAYING:
 			gamePanel.getGame().getPlaying().keyPressed(e);
+			break;
+		case LEVEL:
+			gamePanel.getGame().getLevelGame().keyPressed(e);
+			break;
+		case HIGHSCORE:
+			gamePanel.getGame().getHighScores().keyPressed(e);
+			break;
+		case INSTRUCTION:
+			gamePanel.getGame().getHighScores().keyPressed(e);
 			break;
 		default:
 			break;

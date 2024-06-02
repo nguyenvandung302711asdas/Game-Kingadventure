@@ -7,12 +7,11 @@ import java.awt.image.BufferedImage;
 
 import Main.Game;
 import Ui.MenuButton;
-import Ui.PauseOverlay;
 import Utilz.LoadSave;
 
 public class Menu extends State implements StateMethods {
 
-	private MenuButton[] buttons = new MenuButton[4];
+	private MenuButton[] buttons = new MenuButton[6];
 	private BufferedImage backgroundImg,backgroundImgPink;
 	private int menuX, menuY, menuWidth, menuHeight;
 	
@@ -25,21 +24,23 @@ public class Menu extends State implements StateMethods {
 	}
 
 	private void loadButtons() {
-		buttons[0] = new MenuButton(Game.GAME_WIDTH / 2, (int) (135 * Game.SCALE), 0, GameState.PLAYING);
-		buttons[1] = new MenuButton(Game.GAME_WIDTH / 2, (int) (200 * Game.SCALE), 1, GameState.HIGHSCORE);
-		buttons[2] = new MenuButton(Game.GAME_WIDTH / 2, (int) (265 * Game.SCALE), 2, GameState.OPTIONS);
-		buttons[3] = new MenuButton(Game.GAME_WIDTH / 2, (int) (330 * Game.SCALE), 3, GameState.QUIT);
+		buttons[0] = new MenuButton(Game.GAME_WIDTH / 2, (int) (150 * Game.SCALE), 0, GameState.PLAYING);
+		buttons[1] = new MenuButton(Game.GAME_WIDTH / 2, (int) (215 * Game.SCALE), 1, GameState.HIGHSCORE);
+		buttons[2] = new MenuButton(Game.GAME_WIDTH / 2, (int) (280 * Game.SCALE), 2, GameState.OPTIONS);
+		buttons[3] = new MenuButton(Game.GAME_WIDTH / 2, (int) (345 * Game.SCALE), 4, GameState.LEVEL);
+		buttons[4] = new MenuButton(Game.GAME_WIDTH / 2, (int) (410 * Game.SCALE), 5, GameState.INSTRUCTION);
+		buttons[5] = new MenuButton(Game.GAME_WIDTH / 2, (int) (470 * Game.SCALE), 3, GameState.QUIT);
+		
 
 	}
 	
 	private void loadBackground() {
 		backgroundImg = LoadSave.GetSpriteAtlas(LoadSave.Menu_Background);
-		menuWidth = (int) (backgroundImg.getWidth() / 1.8);
-		menuHeight = (int) (backgroundImg.getHeight() / 1.1);
+		menuWidth = 500;
+		menuHeight =672;
 		menuX = Game.GAME_WIDTH / 2 - menuWidth / 2;
-		menuY = (int) (18 * Game.SCALE);
+		menuY = (int) (3 * Game.SCALE);
 	}
-
 	@Override
 	public void update() {
 		for (MenuButton mb : buttons)
@@ -81,7 +82,6 @@ public class Menu extends State implements StateMethods {
 				break;
 			}
 		}
-
 		resetButtons();
 
 	}

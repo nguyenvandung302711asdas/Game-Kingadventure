@@ -1,16 +1,18 @@
 package Main;
 
 import java.awt.Graphics;
-
-import javax.swing.JFrame;
-
+import Audio.AudioPlayer;
+import GameStates.GameOptions;
 import GameStates.GameState;
+import GameStates.HighScores;
+import GameStates.Instruction;
+import GameStates.LevelGame;
 import GameStates.Menu;
 import GameStates.Playing;
 import Levels.LevelManager;
+import Ui.AudioOptions;
 
 public class Game implements Runnable {
-
 	private GameWinDow gameWindow;
 	private GamePanel gamePanel;
 	private Thread gameThread;
@@ -19,7 +21,13 @@ public class Game implements Runnable {
 
 	private Playing playing;
 	private Menu menu;
-	private LevelManager level1;
+	private GameOptions gameOptions;
+	private LevelGame levelGame;
+	private HighScores gameHighScore;
+	private LevelManager levelManager;
+	private AudioOptions audioOptions;
+	private AudioPlayer audioPlayer;
+	private Instruction instruction;
 
 	public final static int TILES_DEFAULT_SIZE = 32;
 	public final static float SCALE = 1.2f;
@@ -31,22 +39,24 @@ public class Game implements Runnable {
 
 	public Game() {
 		initClasses();
-
 		gamePanel = new GamePanel(this);
 		gameWindow = new GameWinDow(gamePanel);
 		gamePanel.setFocusable(true);
 		gamePanel.requestFocus();
-
 		startGameLoop();
-
 	}
 
 	private void initClasses() {
+		audioOptions = new AudioOptions(this);	
+		audioPlayer = new AudioPlayer();
+		gameOptions = new GameOptions(this);
 		menu = new Menu(this);
 		playing = new Playing(this);
-		level1 = new LevelManager(this);
+		levelManager = new LevelManager(this);
+		levelGame = new LevelGame(this, playing, levelManager); 
+		gameHighScore = new HighScores(this);
+		instruction = new Instruction(this);
 	}
-
 	private void startGameLoop() {
 		gameThread = new Thread(this);
 		gameThread.start();
@@ -61,8 +71,16 @@ public class Game implements Runnable {
 			playing.update();
 			break;
 		case HIGHSCORE:
+			gameHighScore.update();
+			break;
+		case LEVEL:
+			levelGame.update();
 			break;
 		case OPTIONS:
+			gameOptions.update();
+			break;
+		case INSTRUCTION:
+			instruction.update();
 			break;
 		case QUIT:
 			System.exit(0);
@@ -70,13 +88,25 @@ public class Game implements Runnable {
 	}
 
 	public void render(Graphics g) {
-		level1.draw(g);
+		levelManager.draw(g);
 		switch (GameState.state) {
 		case MENU:
 			menu.draw(g);
 			break;
 		case PLAYING:
 			playing.draw(g);
+			break;
+		case HIGHSCORE:
+			gameHighScore.draw(g );
+			break;
+		case OPTIONS:
+			gameOptions.draw(g);
+			break;
+		case LEVEL:
+			levelGame.draw(g);
+			break;
+		case INSTRUCTION:
+			instruction.draw(g);
 			break;
 		default:
 			break;
@@ -119,10 +149,8 @@ public class Game implements Runnable {
 
 			if (System.currentTimeMillis() - lastCheck >= 1000) {
 				lastCheck = System.currentTimeMillis();
-				System.out.println("FPS: " + frames + " | UPS: " + updates);
 				frames = 0;
 				updates = 0;
-
 			}
 		}
 
@@ -131,6 +159,7 @@ public class Game implements Runnable {
 	public void windowFocusLost() {
 		if (GameState.state == GameState.PLAYING);
 			playing.getPlayer().resetDirBooleans();
+			
 	}
 
 	public Menu getMenu() {
@@ -139,5 +168,26 @@ public class Game implements Runnable {
 
 	public Playing getPlaying() {
 		return playing;
+	}
+	
+	public AudioOptions getAudioOptions() {
+		return audioOptions;
+	}
+	public AudioPlayer getAudioPlayer() {
+		return audioPlayer;
+	}
+
+	public GameOptions getGameOptions() {
+		return gameOptions;
+	}
+	public LevelGame getLevelGame() {
+		return levelGame;
+	}
+	
+	public HighScores getHighScores() {
+		return gameHighScore;
+	}
+	public Instruction getInstruction() {
+		return instruction;
 	}
 }

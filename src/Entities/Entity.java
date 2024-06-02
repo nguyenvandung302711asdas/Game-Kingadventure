@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 
-import Main.Game;
-
 public abstract class Entity {
 
 	protected float x, y;
@@ -18,13 +16,14 @@ public abstract class Entity {
 		this.width = width;
 		this.height = height;
 	}
-
+	//vẽ hitbox len man hình
 	protected void drawHitbox(Graphics g) {
 
 		g.setColor(Color.PINK);
 		g.drawRect((int) hitbox.x, (int) hitbox.y, (int) hitbox.width, (int) hitbox.height);
 	}
-
+	
+	//tao hit bắt va chạm
 	protected void initHitbox(float x, float y, float f, float g) {
 		hitbox = new Rectangle2D.Float(x, y, f, g);
 	}

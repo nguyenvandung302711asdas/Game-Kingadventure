@@ -1,6 +1,5 @@
 package Entities;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -8,7 +7,7 @@ import java.util.ArrayList;
 
 import GameStates.Playing;
 import Levels.Level;
-import Main.Game;
+
 import Utilz.LoadSave;
 
 import static Utilz.Constants.EnemyConstants.*;
@@ -66,7 +65,7 @@ public class EnemyManager {
 		for (Piggy c : pigs)
 			if (c.isActive())
 				if (attackBox.intersects(c.getHitbox())) {
-					c.hurt(10);
+					c.hurt(1);
 					return;
 				}
 	}

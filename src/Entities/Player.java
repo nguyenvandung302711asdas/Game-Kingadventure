@@ -3,14 +3,17 @@ package Entities;
 import static Utilz.Constants.PlayerConstants.*;
 import static Utilz.HelpMethods.*;
 import Utilz.LoadSave;
+import static Utilz.Constants.ANI_SPEED;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import GameStates.Playing;
+import Audio.AudioPlayer;
 import Main.Game;
 
 public class Player extends Entity{
@@ -18,6 +21,7 @@ public class Player extends Entity{
 	private BufferedImage[][] animation;
 	
 	private int aniTick,aniIndex,aniSpeed = 25;
+	private int heartIndex, diamondIndex;
 	private int flipX = 0, flipW = 1;
 	private int[][] lvlData;
 	private int playerAction = IDLE ;
@@ -29,31 +33,32 @@ public class Player extends Entity{
 	private float yDrawOffset = 19 *Game.SCALE;
 
 	private float airSpeed = 0f;
-	private float gravity = 0.04f * Game.SCALE;
+	private float gravity = 0.025f * Game.SCALE;
 	private float jumpSpeed = -2.25f * Game.SCALE;
 	private float fallSpeedAfterCollision = 0.5f * Game.SCALE;
 	private boolean inAir = false;
 	
 	//Status Bar UI
 	private BufferedImage statusBarImg;
+	private BufferedImage[] heart;
+	private BufferedImage[] diamonImgs;
 
-	private int statusBarWidth = (int) (192 * Game.SCALE);
-	private int statusBarHeight = (int) (58 * Game.SCALE);
-	private int statusBarX = (int) (10 * Game.SCALE);
-	private int statusBarY = (int) (10 * Game.SCALE);
+	
+	private int statusBarWidth = (int) (99 * Game.SCALE);
+	private int statusBarHeight = (int) (51 * Game.SCALE);
+	private int statusBarX = (int) (40 * Game.SCALE);
+	private int statusBarY = (int) (25 * Game.SCALE);
 
-	private int healthBarWidth = (int) (150 * Game.SCALE);
-	private int healthBarHeight = (int) (4 * Game.SCALE);
-	private int healthBarXStart = (int) (34 * Game.SCALE);
-	private int healthBarYStart = (int) (14 * Game.SCALE);
+	private int healthBarXStart = (int) (57 * Game.SCALE);
+	private int healthBarYStart = (int) (40 * Game.SCALE);
 
-	private int maxHealth = 100;
+	private int tileY = 0;
+
+	private int maxHealth = 3;
 	private int currentHealth = maxHealth;
-	private int healthWidth = healthBarWidth;
 	
 	//Attack Box
 	private Rectangle2D.Float attackBox;
-	
 	private boolean attackChecked;
 	private Playing playing;
 	
@@ -64,32 +69,51 @@ public class Player extends Entity{
 		initHitbox(x, y, (int)35, (int) 37);
 		initAttackBox();
 	}
-
+	
 	public void update() {
-		updateHealthBar();
-
 		if (currentHealth <= 0) {
-			playing.setGameOver(true);
+			if (playerAction != DEAD) {
+				playerAction = DEAD;
+				aniTick = 0;
+				aniIndex = 0;
+				playing.setPlayerDying(true);
+				playing.getGame().getAudioPlayer().playEffect(AudioPlayer.DIE);
+			} else if (aniIndex == GetSpriteAmount(DEAD) - 1 && aniTick >= ANI_SPEED - 1) {
+				playing.setGameOver(true);
+				playing.getGame().getAudioPlayer().stopSong();
+				playing.getGame().getAudioPlayer().playEffect(AudioPlayer.GAMEOVER);
+			} else
+				updateAnimationTick();
+
 			return;
 		}
 		updateAttackBox();
 		updatePos();
+		if (moving) {
+			checkPotionTouched();
+			tileY = (int) hitbox.y / Game.TILES_SIZE;
+		}
+		checkSpikeTouched();
+		
 		if (attacking)
-			checkAttack();
+		checkAttack();
 		updateAnimationTick();
+		updateHeartTick();
+		updateDiamondTick();
 		setAnimation();
 	}
-
+	
+	private void checkSpikeTouched() {
+		playing.checkSpikeTouched(this);
+	}
 	public void render(Graphics g) {
 		g.drawImage(animation[playerAction][aniIndex], (int) x + flipX, (int) y, 128 * flipW, 80, null);
-//		drawHitbox(g);
+//	    drawHitbox(g);
 //		drawAttackBox(g);
 		drawUI(g);
 	}
 	
 	public void setSpawn(Point spawn) {
-		System.out.println(spawn.x);
-		System.out.println(spawn.y);
 		this.x = spawn.x;
 		this.y = spawn.y;
 		hitbox.x = x;
@@ -110,13 +134,14 @@ public class Player extends Entity{
 		attackBox.y = hitbox.y;
 	}
 
-	private void drawAttackBox(Graphics g) {
-		g.setColor(Color.red);
-		g.drawRect((int)attackBox.x, (int)attackBox.y, (int)attackBox.width, (int)attackBox.height);
-	}
+//	private void drawAttackBox(Graphics g) {
+//		g.setColor(Color.red);
+//		g.drawRect((int)attackBox.x, (int)attackBox.y, (int)attackBox.width, (int)attackBox.height);
+//	}
 	
-	private void updateHealthBar() {
-		healthWidth = (int) ((currentHealth / (float) maxHealth) * healthBarWidth);
+	
+	private void checkPotionTouched() {
+		playing.checkDiamonTouched(hitbox);
 	}
 	
 	public void changeHealth(int value) {
@@ -128,10 +153,26 @@ public class Player extends Entity{
 			currentHealth = maxHealth;
 	}
 	
+	public void kill() {
+		changeHealth(-10);		
+	}
+	
 	private void drawUI(Graphics g) {
 		g.drawImage(statusBarImg, statusBarX, statusBarY,  statusBarWidth, statusBarHeight, null);
-		g.setColor(Color.red);
-		g.fillRect(healthBarXStart + statusBarX, healthBarYStart + statusBarY, healthWidth, healthBarHeight);
+		switch(currentHealth) {
+		case 1:
+			g.drawImage(heart[heartIndex], healthBarXStart, healthBarYStart, (int)(27 * Game.SCALE), (int)(21 * Game.SCALE), null);
+			break;
+		case 2:
+			g.drawImage(heart[heartIndex], healthBarXStart, healthBarYStart, (int)(27 * Game.SCALE), (int)(21 * Game.SCALE), null);
+			g.drawImage(heart[heartIndex], healthBarXStart + 20, healthBarYStart, (int)(27 * Game.SCALE), (int)(21 * Game.SCALE), null);
+			break;
+		case 3:
+			g.drawImage(heart[heartIndex], healthBarXStart, healthBarYStart, (int)(27 * Game.SCALE), (int)(21 * Game.SCALE), null);
+			g.drawImage(heart[heartIndex], healthBarXStart + 20, healthBarYStart, (int)(27 * Game.SCALE), (int)(21 * Game.SCALE), null);
+			g.drawImage(heart[heartIndex], healthBarXStart + 40, healthBarYStart, (int)(27 * Game.SCALE), (int)(21 * Game.SCALE), null);
+			break;
+		}
 	}
 
 	private void updateAnimationTick() {
@@ -147,12 +188,33 @@ public class Player extends Entity{
 		}
 	}
 	
+	private void updateHeartTick() {
+		aniTick++;
+		if (aniTick >= aniSpeed) { 
+			aniTick = 0;
+			heartIndex++;
+			if (heartIndex >= 8) 
+				heartIndex = 0;
+		}
+	}
+	
+	private void updateDiamondTick() {
+		aniTick++;
+		if (aniTick >= aniSpeed) { 
+			aniTick = 0;
+			diamondIndex++;
+			if (diamondIndex >= 10) 
+				diamondIndex = 0;
+		}
+	}
+	
 	private void checkAttack() {
 		if (attackChecked || aniIndex != 1)
 			return;
 		attackChecked = true;
 		playing.checkEnemyHit(attackBox);
-
+		playing.checkObjectHit(attackBox);
+		playing.getGame().getAudioPlayer().playAttackSound();
 	}
 	
 	private void setAnimation() {
@@ -176,7 +238,6 @@ public class Player extends Entity{
 		if (startAni != playerAction)
 			resetAniTick();
 	}
-	
 
 	private void resetAniTick() {
 		aniTick = 0;
@@ -210,9 +271,9 @@ public class Player extends Entity{
 	        xSpeed += playerSpeed;
 	        moving = true;
 	    }
-	    if (!inAir && !IsEntityOnFloor(hitbox, lvlData)) {
+	    if (!inAir && !IsEntityOnFloor(hitbox, lvlData)) 
 	        inAir = true;
-	    }
+	    
 	    if (inAir) {
 	        if (CanMoveHere(hitbox.x, hitbox.y + airSpeed, hitbox.width, hitbox.height, lvlData)) {
 	            hitbox.y += airSpeed;
@@ -222,18 +283,17 @@ public class Player extends Entity{
 	        } 
 	        else {
 	            hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed);
-	            if (airSpeed > 0) {
+	            if (airSpeed > 0) 
 	                resetInAir();
-	            } 
-	             else {
+	             else 
 	                airSpeed = fallSpeedAfterCollision;
-	            }
 	            updateXPos(xSpeed);
 	        }
 	    } 
 	    else updateXPos(xSpeed);
 	    hitbox.x = x + xDrawOffset;
 	    hitbox.y = y + yDrawOffset;
+	    
 	}
 
 	private void resetInAir() {
@@ -253,13 +313,34 @@ public class Player extends Entity{
 
 	private void loadAnimation() {
 		BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.Player);
+		BufferedImage heartSprite = LoadSave.GetSpriteAtlas(LoadSave.HEART);
+		BufferedImage diamondSprite = LoadSave.GetSpriteAtlas(LoadSave.DIAMON);
 		
 		animation = new BufferedImage[10][11];
+		heart = new BufferedImage[8];
+		diamonImgs = new BufferedImage[10];
+		
 		for(int j=0;j<animation.length;j++) 
 			for(int i=0;i<animation[j].length;i++) 
 				animation[j][i] = img.getSubimage(i*78,j*58, 78, 58);
+		for(int i=0;i<heart.length;i++) 
+			heart[i] = heartSprite.getSubimage(i*18, 0, 18, 14);
+		for (int i = 0; i < diamonImgs.length; i++)
+			diamonImgs[i] = diamondSprite.getSubimage(18 * i, 0, 18, 14);
 		
 		 statusBarImg = LoadSave.GetSpriteAtlas(LoadSave.STATUS_BAR);
+		 
+		 
+	}
+	
+	public void drawScore(Graphics g) {
+		g.drawImage(diamonImgs[diamondIndex], 60, 95, 36, 28, null);
+		Font largeFont = g.getFont().deriveFont(Font.BOLD, 20f);
+        g.setFont(largeFont);
+        g.drawString("x", 105, 115);
+        g.setColor(Color.pink);
+        g.drawString(Integer.toString(Playing.score), 120, 115);
+        
 	}
 	
 	public void resetDirBooleans() {
@@ -271,7 +352,8 @@ public class Player extends Entity{
 	
 	private void jump() {
 		if (inAir)
-			return;
+			return;		
+		playing.getGame().getAudioPlayer().playEffect(AudioPlayer.JUMP);
 		inAir = true;
 		airSpeed = jumpSpeed;
 
@@ -322,6 +404,7 @@ public class Player extends Entity{
 		inAir = false;
 		attacking = false;
 		moving = false;
+		jump = false;
 		playerAction = IDLE;
 		currentHealth = maxHealth;
 		x = 100;
@@ -332,4 +415,13 @@ public class Player extends Entity{
 		if (!IsEntityOnFloor(hitbox, lvlData))
 			inAir = true;
 	}
+	public int getTileY() {
+		return tileY;
+	}
+
+	
+
+	
+
+	
 }

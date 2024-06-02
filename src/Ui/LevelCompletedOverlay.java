@@ -56,27 +56,32 @@ public class LevelCompletedOverlay {
 		next.update();
 		menu.update();
 	}
-	
+	private boolean isIn(UrmButton b, MouseEvent e) {
+		return b.getBounds().contains(e.getX(), e.getY());
+	}
 	public void mouseDragged(MouseEvent e) {
 		
 	}
 	
 	public void mousePressed(MouseEvent e) {
-		if (isIn(e, menu))
+		if (isIn(menu, e))
 			menu.setMousePressed(true);
-		else if (isIn(e, next))
+		else if (isIn(next, e))
 			next.setMousePressed(true);
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		if (isIn(e, menu)) {
-			if (menu.isMousePressed());
-				GameState.state = GameState.MENU;
-
-		} else if (isIn(e, next)) 
-			if (next.isMousePressed()) 
+		if (isIn(menu, e)) {
+			if (menu.isMousePressed()) {
+				playing.resetAll();
+				playing.setGamestate(GameState.MENU);
+			}
+		} else if (isIn(next, e))
+			if (next.isMousePressed()) {
 				playing.loadNextLevel();
-		
+				playing.getGame().getAudioPlayer().setLevelSong(playing.getLevelManager().getLevelIndex());
+			}
+
 		menu.resetBools();
 		next.resetBools();
 	}
@@ -84,15 +89,14 @@ public class LevelCompletedOverlay {
 	public void mouseMoved(MouseEvent e) {
 		menu.setMouseOver(false);
 		next.setMouseOver(false);
-		
-		if (isIn(e, menu))
+		if (isIn(menu, e))
 			menu.setMouseOver(true);
-		else if (isIn(e, next))
+		else if (isIn(next, e))
 			next.setMouseOver(true);
 	}
 
-	private boolean isIn(MouseEvent e, PauseButton b) {
-		return b.getBounds().contains(e.getX(), e.getY());
-	}
+//	private boolean isIn(MouseEvent e, PauseButton b) {
+//		return b.getBounds().contains(e.getX(), e.getY());
+//	}
 }
 
